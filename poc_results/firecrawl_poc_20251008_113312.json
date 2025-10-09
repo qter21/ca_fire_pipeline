@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-10-08T11:33:01.321402",
+  "tests": [
+    {
+      "test": "architecture_scraping",
+      "code": "EVID",
+      "url": "https://leginfo.legislature.ca.gov/faces/codedisplayexpand.xhtml?tocCode=EVID",
+      "duration": 5.6096110343933105,
+      "success": true,
+      "text_page_links_found": 78,
+      "markdown_length": 22892,
+      "total_links_on_page": 104,
+      "sample_links": [
+        "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=EVID&division=1.&title=&part=&chapter=&article=",
+        "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=EVID&division=2.&title=&part=&chapter=&article=",
+        "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=EVID&division=3.&title=&part=&chapter=1.&article=",
+        "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=EVID&division=3.&title=&part=&chapter=2.&article=",
+        "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=EVID&division=3.&title=&part=&chapter=3.&article="
+      ]
+    },
+    {
+      "test": "section_content_extraction",
+      "code": "EVID",
+      "section": "1",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1&lawCode=EVID",
+      "duration": 0.8738710880279541,
+      "success": true,
+      "section_content": "This code shall be known as the Evidence Code.",
+      "content_length": 46,
+      "markdown_length": 4384,
+      "legislative_history": "Enacted by Stats. 1965, Ch. 299.",
+      "sample_content": "This code shall be known as the Evidence Code...."
+    },
+    {
+      "test": "batch_scraping",
+      "code": "EVID",
+      "sections": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "total_sections": 5,
+      "successful": 5,
+      "failed": 0,
+      "duration": 3.7967100143432617,
+      "avg_time_per_section": 0.7593420028686524,
+      "success": true
+    },
+    {
+      "test": "multi_version_detection",
+      "code": "FAM",
+      "section": "3044",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=3044&lawCode=FAM",
+      "duration": 0.7868428230285645,
+      "success": true,
+      "is_multi_version": true,
+      "versions_found": 0,
+      "version_info": []
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+# Test data for California Legal Code sections
+# This file contains expected content for verifying the content extractor
+# Format:
+#   - code: Legal code (FAM, CCP, PEN, etc.)
+#     section: Section number
+#     description: Brief description
+#     content: Expected content text
+#     legislative_history: Expected legislative history
+#     is_multi_version: true/false
+#     key_phrases: List of phrases that must exist in content
+
+test_sections:
+  - code: FAM
+    section: "1"
+    content: |
+      This code shall be known as the Family Code.  
+    legislative_history: "Enacted by Stats. 1992, Ch. 162, Sec. 10. Operative January 1, 1994."
+    is_multi_version: false
+
+  - code: FAM
+    section: "9003"
+    content: |
+      (a) In a stepparent adoption, the consent of either or both birth parents shall be signed in the presence of a notary public, court clerk, probation officer, qualified court investigator, authorized representative of a licensed adoption agency, or county welfare department staff member of any county of this state. The petitioner, petitioner’s counsel, or person before whom the consent is signed shall immediately file the consent with the clerk of the court where the adoption request is filed. If the request has not been filed at the time the consent has been signed, the consent shall be filed simultaneously with the adoption request. Upon filing of the adoption request, the clerk shall immediately notify the probation officer or, at the option of the board of supervisors, the county welfare department of that county.
+
+      (b) If the birth parent of a child to be adopted is outside this state at the time of signing the consent, the consent may be signed before an authorized representative of an adoption agency licensed in the state or country where the consent is being signed, a notary, or other person authorized to perform notarial acts.
+
+      (c) The consent, when reciting that the person giving it is entitled to sole custody of the child and when acknowledged before any authorized witness specified in subdivision (a), is prima facie evidence of the right of the person signing the consent to the sole custody of the child and that person’s sole right to consent.
+
+      (d) A birth parent who is a minor has the right to sign a consent for the adoption of the birth parent’s child and the consent is not subject to revocation by reason of the minority.
+
+    legislative_history: "Amended by Stats. 2011, Ch. 462, Sec. 8. (AB 687) Effective January 1, 2012."
+    is_multi_version: false
+
+  - code: CCP
+    section: "2002"
+    content: |
+      The testimony of witnesses is taken in three modes:
+        1. By affidavit;
+        2. By deposition;
+        3. By oral examination. 
+    legislative_history: "Enacted 1872."
+    is_multi_version: false
+
+  - code: FAM
+    section: "17000"
+    content: |
+      The definitions contained in this section, and definitions applicable to Division 9 (commencing with Section 3500), shall govern the construction of this division, unless the context requires otherwise.
+
+      (a) “Child support debt” means the amount of money owed as child support pursuant to a court order.
+
+      (b) “Child support order” means a court order for the payment of a set or determinable amount of support by a parent or a court order requiring a parent to provide for health insurance coverage. “Child support order” includes any court order for spousal support or for medical support to the extent these obligations are to be enforced by a single state agency for child support under Title IV-D.
+
+      (c) “Court” means any superior court of this state and any court or tribunal of another state that has jurisdiction to determine the liability of persons for the support of another person.
+
+      (d) “Court order” means a judgment, decree, or order of any court of this state that orders the payment of a set or determinable amount of support by a parent. It does not include any order or decree of any proceeding in which a court did not order support.
+
+      (e) “Department” means the Department of Child Support Services.
+
+      (f) “Dependent child” means any of the following:
+
+      (1) Any person under 18 years of age who is not emancipated, self-supporting, married, or a member of the Armed Forces of the United States.
+
+      (2) Any unmarried person who is at least 18 years of age but who has not reached 19 years of age, is not emancipated, and is a student regularly attending high school or a program of vocational or technical training designed to train that person for gainful employment.
+
+      (g) “Director” means the Director of Child Support Services or an authorized representative.
+
+      (h) “Local child support agency” means the county department of child support services created pursuant to this chapter and with which the department has entered into a cooperative agreement, to secure child and spousal support, medical support, and determine paternity. Local child support agency includes county programs in multiple counties that have been consolidated into a single agency pursuant to subdivision (a) of Section 17304.
+
+      (i) “Parent” means the natural or adoptive father or mother of a dependent child, and includes any person who has an enforceable obligation to support a dependent child.
+
+      (j) “Public assistance” means any amount paid under the California Work Opportunity and Responsibility to Kids Act (Chapter 2 (commencing with Section 11200) of Part 3 of Division 9 of the Welfare and Institutions Code), or any Medi-Cal benefit, for the benefit of any dependent child or the caretaker of a child.
+
+      (k) “Public assistance debt” means any amount paid under the California Work Opportunity and Responsibility to Kids Act, contained in Chapter 2 (commencing with Section 11200) of Part 3 of Division 9 of the Welfare and Institutions Code, for the benefit of a dependent child or the caretaker of a child for whom the department is authorized to seek recoupment under this division, subject to applicable federal law.
+
+      (l) “Title IV-D” or “IV-D” means Part D of Title IV of the federal Social Security Act (42 U.S.C. Sec. 651 et seq.).    legislative_history: "Enacted 1872."
+    legislative_history: "Amended by Stats. 2019, Ch. 115, Sec. 140. (AB 1817) Effective January 1, 2020."
+    is_multi_version: false
+
+  - code: FAM
+    section: "400"
+    content: |
+      (a) Although marriage is a personal relation arising out of a civil, and not a religious, contract, a marriage may be solemnized by a priest, minister, rabbi, or authorized person of any religious denomination who is 18 years of age or older. A person authorized by this subdivision shall not be required to solemnize a marriage that is contrary to the tenets of the person’s faith. Refusal to solemnize a marriage under this subdivision, either by an individual or by a religious denomination, shall not affect the tax-exempt status of any entity.
+
+      (b) Consistent with Section 94.5 of the Penal Code and provided that any compensation received is reasonable, including payment of actual expenses, a marriage may also be solemnized by any of the following persons:
+
+      (1) A judge or retired judge, commissioner of civil marriages or retired commissioner of civil marriages, commissioner or retired commissioner, or assistant commissioner of a court of record in this state.
+
+      (2) A judge or magistrate who has resigned from office.
+
+      (3) Any of the following judges or magistrates of the United States:
+
+      (A) A justice or retired justice of the United States Supreme Court.
+
+      (B) A judge or retired judge of a court of appeals, a district court, or a court created by an act of the United States Congress the judges of which are entitled to hold office during good behavior.
+
+      (C) A judge or retired judge of a bankruptcy court or a tax court.
+
+      (D) A United States magistrate or retired magistrate.
+
+      (c) Except as provided in subdivision (d), a marriage may also be solemnized by any of the following persons who are 18 years of age or older:
+
+      (1) A Member of the Legislature or constitutional officer of this state or a Member of Congress of the United States who represents a district within this state, or a former Member of the Legislature or constitutional officer of this state or a former Member of Congress of the United States who represented a district within this state.
+
+      (2) A person that holds or formerly held an elected office of a city, county, or city and county.
+
+      (3) A city clerk of a charter city or serving in accordance with subdivision (b) of Section 36501 of the Government Code, while that person holds office.
+
+      (d) (1) A person listed in subdivision (c) shall not accept compensation for solemnizing a marriage while holding office.
+
+      (2) A person listed in subdivision (c) shall not solemnize a marriage pursuant to this section if they have been removed from office due to committing an offense or have been convicted of an offense that involves moral turpitude, dishonesty, or fraud.
+
+    legislative_history: "Amended by Stats. 2019, Ch. 115, Sec. 8. (AB 1817) Effective January 1, 2020."
+    is_multi_version: false
+
+
+  - code: CCP
+    section: "165"
+    content: |
+      The justices of the Supreme Court and of the courts of appeal, or any of them, may, at chambers, grant all orders and writs which are usually granted in the first instance upon an ex parte application, except writs of mandamus, certiorari, and prohibition; and may, in their discretion, hear applications to discharge such orders and writs.
+
+    legislative_history: "Amended by Stats. 1967, Ch. 17."  
+    is_multi_version: false
+
+  - code: FAM
+    section: "270"
+    content: |
+      If a court orders a party to pay attorney’s fees or costs under this code, the court shall first determine that the party has or is reasonably likely to have the ability to pay.
+    legislative_history: "Repealed and added by Stats. 1993, Ch. 219, Sec. 87. Effective January 1, 1994."  
+    is_multi_version: false
+
+  - code: FAM
+    section: "355"
+    content: |
+      (a) The forms for the marriage license shall be prescribed by the State Department of Public Health, and shall be adapted to set forth the facts required in this part.
+
+      (b) The marriage license shall include an affidavit, which the applicants shall sign, affirming that they have received the brochure provided for in Section 358. If the marriage is to be entered into pursuant to subdivision (b) of Section 420, the attorney in fact shall sign the affidavit on behalf of the applicant who is overseas.
+
+      (c) The forms for the marriage license shall contain spaces for either party or both parties to indicate a change in name pursuant to Section 306.5.
+    legislative_history: "Amended (as amended by Stats. 2006, Ch. 816) by Stats. 2007, Ch. 567, Sec. 8. Effective January 1, 2008. Operative January 1, 2009, by Sec. 13 of Ch. 567."  
+    is_multi_version: false
+
+  - code: FAM
+    section: "3043"
+    content: |
+      In determining the person or persons to whom custody should be granted under paragraph (2) or (3) of subdivision (a) of Section 3040, the court shall consider and give due weight to the nomination of a guardian of the person of the child by a parent under Article 1 (commencing with Section 1500) of Chapter 1 of Part 2 of Division 4 of the Probate Code.
+
+    legislative_history: "Repealed and added by Stats. 1993, Ch. 219, Sec. 116.50. Effective January 1, 1994."
+    is_multi_version: false
+
+
+  - code: CCP
+    section: "73d"
+    content: |
+      Whenever, under Section 73c, it becomes necessary for a judge, clerk, deputy clerk, court reporter or bailiff of or sitting in the superior court of the county in this state in which is located the principal office of any savings and loan association whose business, property and assets are in the possession of the Commissioner of Financial Institutions, to travel to another county, there temporarily to attend hearings relating to the sale, exchange or other disposition of real or personal property of the association, each judge, clerk, deputy clerk, court reporter or bailiff shall be allowed the necessary expenses in going to, returning from and attending upon the business of the court. The expenses shall, upon order of the court, be a charge against the funds of the association and paid out of those funds by the Commissioner of Financial Institutions.
+    is_multi_version: false
+    legislative_history: "Amended by Stats. 2003, Ch. 149, Sec. 2. Effective January 1, 2004."  
+
+  - code: FAM
+    section: "3044"
+    is_multi_version: true
+    redirect_url_contains: "selectFromMultiples"    
+    versions:
+      - operative_date: "January 1, 2025"
+        content: |
+          (a) Upon a finding by the court that a party seeking custody of a child has perpetrated domestic violence within the previous five years against the other party seeking custody of the child, or against the child or the child’s siblings, or against a person in subparagraph (A) of paragraph (2) of subdivision (a) of Section 3011 with whom the party has a relationship, there is a rebuttable presumption that an award of sole or joint physical or legal custody of a child to a person who has perpetrated domestic violence is detrimental to the best interest of the child, pursuant to Sections 3011 and 3020. This presumption may only be rebutted by a preponderance of the evidence.
+
+          (b) To overcome the presumption set forth in subdivision (a), the court shall find that paragraph (1) is satisfied and shall find that the factors in paragraph (2), on balance, support the legislative findings in Section 3020.
+
+          (1) The perpetrator of domestic violence has demonstrated that giving sole or joint physical or legal custody of a child to the perpetrator is in the best interest of the child pursuant to Sections 3011 and 3020. In determining the best interest of the child, the preference for frequent and continuing contact with both parents, as set forth in subdivision (b) of Section 3020, or with the noncustodial parent, as set forth in paragraph (1) of subdivision (a) of Section 3040, may not be used to rebut the presumption, in whole or in part.
+
+          (2) Additional factors:
+
+          (A) The perpetrator has successfully completed a batterer’s treatment program that meets the criteria outlined in subdivision (c) of Section 1203.097 of the Penal Code.
+
+          (B) The perpetrator has successfully completed a program of alcohol or drug abuse counseling, if the court determines that counseling is appropriate.
+
+          (C) The perpetrator has successfully completed a parenting class, if the court determines the class to be appropriate.
+
+          (D) The perpetrator is on probation or parole, and has or has not complied with the terms and conditions of probation or parole.
+
+          (E) The perpetrator is restrained by a protective order or restraining order, and has or has not complied with its terms and conditions.
+
+          (F) The perpetrator of domestic violence has committed further acts of domestic violence.
+
+          (G) The court has determined, pursuant to Section 6322.5, that the perpetrator is a restrained person in possession or control of a firearm or ammunition in violation of Section 6389.
+
+          (c) For purposes of this section, a person has “perpetrated domestic violence” when the person is found by the court to have intentionally or recklessly caused or attempted to cause bodily injury, or sexual assault, or to have placed a person in reasonable apprehension of imminent serious bodily injury to that person or to another, or to have engaged in behavior involving, but not limited to, threatening, striking, harassing, destroying personal property, or disturbing the peace of another, for which a court may issue an ex parte order pursuant to Section 6320 to protect the other party seeking custody of the child or to protect the child and the child’s siblings.
+
+          (d) (1) For purposes of this section, the requirement of a finding by the court shall be satisfied by, among other things, and not limited to, evidence that a party seeking custody has been convicted within the previous five years, after a trial or a plea of guilty or no contest, of a crime against the other party that comes within the definition of domestic violence contained in Section 6211 and of abuse contained in Section 6203, including, but not limited to, a crime described in subdivision (e) of Section 243 of, or Section 261, 273.5, 422, or 646.9 of, or former Section 262 of, the Penal Code.
+
+          (2)  The requirement of a finding by the court shall also be satisfied if a court, whether that court hears or has heard the child custody proceedings or not, has made a finding pursuant to subdivision (a) based on conduct occurring within the previous five years.
+
+          (e) When a court makes a finding that a party has perpetrated domestic violence, the court may not base its findings solely on conclusions reached by a child custody evaluator or on the recommendation of the Family Court Services staff, but shall consider any relevant, admissible evidence submitted by the parties.
+
+          (f) (1) It is the intent of the Legislature that this subdivision be interpreted consistently with the decision in Jaime G. v. H.L. (2018) 25 Cal.App.5th 794, which requires that the court, in determining that the presumption in subdivision (a) has been overcome, make specific findings on each of the factors in subdivision (b).
+
+          (2) If the court determines that the presumption in subdivision (a) has been overcome, the court shall state its reasons in writing or on the record as to why paragraph (1) of subdivision (b) is satisfied and why the factors in paragraph (2) of subdivision (b), on balance, support the legislative findings in Section 3020.
+
+          (g) In an evidentiary hearing or trial in which custody orders are sought and where there has been an allegation of domestic violence, the court shall make a determination as to whether this section applies prior to issuing a custody order, unless the court finds that a continuance is necessary to determine whether this section applies, in which case the court may issue a temporary custody order for a reasonable period of time, provided the order complies with Sections 3011 and 3020.
+
+          (h) In a custody or restraining order proceeding in which a party has alleged that the other party has perpetrated domestic violence in accordance with the terms of this section, the court shall inform the parties of the existence of this section and shall give them a copy of this section prior to custody mediation in the case.
+
+          (i) This section shall remain in effect only until January 1, 2026, and as of that date is repealed.
+
+        legislative_history: "Amended by Stats. 2024, Ch. 544, Sec. 6. (SB 899) Effective January 1, 2025. Repealed as of January 1, 2026, by its own provisions. See later operative version added by Sec. 7 of Stats. 2024, Ch. 544."
+    
+      - operative_date: "January 1, 2026"
+        content: |
+          (a) Upon a finding by the court that a party seeking custody of a child has perpetrated domestic violence within the previous five years against the other party seeking custody of the child, or against the child or the child’s siblings, or against a person in subparagraph (A) of paragraph (2) of subdivision (a) of Section 3011 with whom the party has a relationship, there is a rebuttable presumption that an award of sole or joint physical or legal custody of a child to a person who has perpetrated domestic violence is detrimental to the best interest of the child, pursuant to Sections 3011 and 3020. This presumption may only be rebutted by a preponderance of the evidence.
+
+          (b) To overcome the presumption set forth in subdivision (a), the court shall find that paragraph (1) is satisfied and shall find that the factors in paragraph (2), on balance, support the legislative findings in Section 3020.
+
+          (1) The perpetrator of domestic violence has demonstrated that giving sole or joint physical or legal custody of a child to the perpetrator is in the best interest of the child pursuant to Sections 3011 and 3020. In determining the best interest of the child, the preference for frequent and continuing contact with both parents, as set forth in subdivision (b) of Section 3020, or with the noncustodial parent, as set forth in paragraph (1) of subdivision (a) of Section 3040, may not be used to rebut the presumption, in whole or in part.
+
+          (2) Additional factors:
+
+          (A) The perpetrator has successfully completed a batterer’s treatment program that meets the criteria outlined in subdivision (c) of Section 1203.097 of the Penal Code.
+
+          (B) The perpetrator has successfully completed a program of alcohol or drug abuse counseling, if the court determines that counseling is appropriate.
+
+          (C) The perpetrator has successfully completed a parenting class, if the court determines the class to be appropriate.
+
+          (D) The perpetrator is on probation or parole, and has or has not complied with the terms and conditions of probation or parole.
+
+          (E) The perpetrator is restrained by a protective order or restraining order, and has or has not complied with its terms and conditions.
+
+          (F) The perpetrator of domestic violence has committed further acts of domestic violence.
+
+          (G) The court has determined, pursuant to Section 6322.5, that the perpetrator is a restrained person in possession or control of a firearm or ammunition in violation of Section 6389, Section 527.9 of the Code of Civil Procedure, or Section 18120 of the Penal Code.
+
+          (c) For purposes of this section, a person has “perpetrated domestic violence” when the person is found by the court to have intentionally or recklessly caused or attempted to cause bodily injury, or sexual assault, or to have placed a person in reasonable apprehension of imminent serious bodily injury to that person or to another, or to have engaged in behavior involving, but not limited to, threatening, striking, harassing, destroying personal property, or disturbing the peace of another, for which a court may issue an ex parte order pursuant to Section 6320 to protect the other party seeking custody of the child or to protect the child and the child’s siblings.
+
+          (d) (1) For purposes of this section, the requirement of a finding by the court shall be satisfied by, among other things, and not limited to, evidence that a party seeking custody has been convicted within the previous five years, after a trial or a plea of guilty or no contest, of a crime against the other party that comes within the definition of domestic violence contained in Section 6211 and of abuse contained in Section 6203, including, but not limited to, a crime described in subdivision (e) of Section 243 of, or Section 261, 273.5, 422, or 646.9 of, or former Section 262 of, the Penal Code.
+
+          (2) The requirement of a finding by the court shall also be satisfied if a court, whether that court hears or has heard the child custody proceedings or not, has made a finding pursuant to subdivision (a) based on conduct occurring within the previous five years.
+
+          (e) When a court makes a finding that a party has perpetrated domestic violence, the court may not base its findings solely on conclusions reached by a child custody evaluator or on the recommendation of the Family Court Services staff, but shall consider any relevant, admissible evidence submitted by the parties.
+
+          (f) (1) It is the intent of the Legislature that this subdivision be interpreted consistently with the decision in Jaime G. v. H.L. (2018) 25 Cal.App.5th 794, which requires that the court, in determining that the presumption in subdivision (a) has been overcome, make specific findings on each of the factors in subdivision (b).
+
+          (2) If the court determines that the presumption in subdivision (a) has been overcome, the court shall state its reasons in writing or on the record as to why paragraph (1) of subdivision (b) is satisfied and why the factors in paragraph (2) of subdivision (b), on balance, support the legislative findings in Section 3020.
+
+          (g) In an evidentiary hearing or trial in which custody orders are sought and where there has been an allegation of domestic violence, the court shall make a determination as to whether this section applies prior to issuing a custody order, unless the court finds that a continuance is necessary to determine whether this section applies, in which case the court may issue a temporary custody order for a reasonable period of time, provided the order complies with Sections 3011 and 3020.
+
+          (h) In a custody or restraining order proceeding in which a party has alleged that the other party has perpetrated domestic violence in accordance with the terms of this section, the court shall inform the parties of the existence of this section and shall give them a copy of this section prior to custody mediation in the case.
+
+          (i) This section shall become effective on January 1, 2026.
+        
+        legislative_history: "Repealed (in Sec. 6) and added by Stats. 2024, Ch. 544, Sec. 7. (SB 899) Effective January 1, 2025. Operative January 1, 2026, by its own provisions."
+    test_detection_only: false  # Change to false when content is added
+
+
+  - code: CCP
+    section: "35"
+    is_multi_version: true
+    redirect_url_contains: "selectFromMultiples"    
+    versions:
+      - operative_date: "January 1, 2025"
+        content: |
+          (a) Proceedings in cases involving the registration or denial of registration of voters, the certification or denial of certification of candidates, the certification or denial of certification of ballot measures, election contests, actions under Section 20010 or 20012 of the Elections Code, actions under Chapter 7 (commencing with Section 20510) of Division 20 of the Elections Code, and actions under Chapter 2 (commencing with Section 21100) of Division 21 of the Elections Code shall be placed on the calendar in the order of their date of filing and shall be given precedence.
+          (b) This section shall remain in effect only until January 1, 2027, and as of that date is repealed, unless a later enacted statute, that is enacted before January 1, 2027, deletes or extends that date.
+        legislative_history: "Amended (as amended by Stats. 2023, Ch. 343, Sec. 1) by Stats. 2024, Ch. 262, Sec. 1.5. (AB 2839) Effective September 17, 2024. Operative January 1, 2025, pursuant to Sec. 4 of Stats. 2024, Ch. 262. Repealed as of January 1, 2027, by its own provisions. See later operative version, as amended by Sec. 2.5 of Stats. 2024, Ch. 262."
+      - operative_date: "January 1, 2027"
+        content: |  
+          (a) Proceedings in cases involving the registration or denial of registration of voters, the certification or denial of certification of candidates, the certification or denial of certification of ballot measures, election contests, actions under Section 20012 of the Elections Code, actions under Chapter 7 (commencing with Section 20510) of Division 20 of the Elections Code, and actions under Chapter 2 (commencing with Section 21100) of Division 21 of the Elections Code shall be placed on the calendar in the order of their date of filing and shall be given precedence.
+          (b) This section shall become operative January 1, 2027.
+        legislative_history: "Amended (as amended by Stats. 2023, Ch. 343, Sec. 2) by Stats. 2024, Ch. 262, Sec. 2.5. (AB 2839) Effective September 17, 2024. Amending action operative January 1, 2025, pursuant to Sec. 5 of Stats. 2024, Ch. 262. Amended section operative January 1, 2027, by its own provisions."
+    test_detection_only: false  # Change to false when content is added
+
+  - code: PEN
+    section: "692"
+    content: |
+      Lawful resistance to the commission of a public offense may be made:
+      1. By the party about to be injured;
+      2. By other parties.
+    legislative_history: "Enacted 1872."
+    is_multi_version: false
+
+# Add more test sections below:
+# Template:
+# - code: CODE
+#   section: "NUMBER"
+#   description: "Description"
+#   content: |
+#     PASTE EXACT EXPECTED CONTENT HERE
+#   legislative_history: "PASTE EXPECTED HISTORY"
+#   is_multi_version: false
+#   key_phrases:
+#     - "phrase 1"
+#     - "phrase 2"

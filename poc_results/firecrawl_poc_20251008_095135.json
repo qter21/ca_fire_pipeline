@@ -1,0 +1,52 @@
+{
+  "timestamp": "2025-10-08T09:51:03.472942",
+  "tests": [
+    {
+      "test": "architecture_scraping",
+      "code": "EVID",
+      "url": "https://leginfo.legislature.ca.gov/faces/codedisplayexpand.xhtml?tocCode=EVID",
+      "duration": 3.1517410278320312,
+      "success": true,
+      "section_links_found": 0,
+      "html_length": 0,
+      "markdown_length": 22892,
+      "sample_links": []
+    },
+    {
+      "test": "section_content_extraction",
+      "code": "EVID",
+      "section": "1",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1&lawCode=EVID",
+      "duration": 2.923999071121216,
+      "success": true,
+      "paragraphs_found": 0,
+      "total_content_length": 0,
+      "markdown_length": 4384
+    },
+    {
+      "test": "batch_scraping",
+      "code": "EVID",
+      "sections": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "total_sections": 5,
+      "successful": 5,
+      "failed": 0,
+      "duration": 12.56111192703247,
+      "avg_time_per_section": 2.5122223854064942
+    },
+    {
+      "test": "multi_version_detection",
+      "code": "FAM",
+      "section": "3044",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=3044&lawCode=FAM",
+      "duration": 13.394383907318115,
+      "success": true,
+      "is_multi_version": false
+    }
+  ]
+}

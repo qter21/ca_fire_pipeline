@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-10-08T09:53:18.803319",
+  "tests": [
+    {
+      "test": "architecture_scraping",
+      "code": "EVID",
+      "url": "https://leginfo.legislature.ca.gov/faces/codedisplayexpand.xhtml?tocCode=EVID",
+      "duration": 0.7175998687744141,
+      "success": true,
+      "section_links_found": 0,
+      "markdown_length": 22892,
+      "total_links_on_page": 104,
+      "sample_links": []
+    },
+    {
+      "test": "section_content_extraction",
+      "code": "EVID",
+      "section": "1",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1&lawCode=EVID",
+      "duration": 0.7103948593139648,
+      "success": true,
+      "section_content": "This code shall be known as the Evidence Code.",
+      "content_length": 46,
+      "markdown_length": 4384,
+      "legislative_history": "Enacted by Stats. 1965, Ch. 299.",
+      "sample_content": "This code shall be known as the Evidence Code...."
+    },
+    {
+      "test": "batch_scraping",
+      "code": "EVID",
+      "sections": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "total_sections": 5,
+      "successful": 5,
+      "failed": 0,
+      "duration": 4.400571823120117,
+      "avg_time_per_section": 0.8801143646240235
+    },
+    {
+      "test": "multi_version_detection",
+      "code": "FAM",
+      "section": "3044",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=3044&lawCode=FAM",
+      "duration": 0.7537531852722168,
+      "success": true,
+      "is_multi_version": true,
+      "versions_found": 0,
+      "version_info": []
+    }
+  ]
+}
