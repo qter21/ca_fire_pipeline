@@ -261,6 +261,11 @@ class DatabaseManager:
             # Remove created_at from $set to avoid conflict with $setOnInsert
             section_dict.pop("created_at", None)
 
+            # Remove None values to avoid overwriting existing data
+            # Stage 1 only provides: code, section, url, hierarchy
+            # Don't overwrite content, legislative_history, versions, etc.
+            section_dict = {k: v for k, v in section_dict.items() if v is not None}
+
             operations.append(
                 UpdateOne(
                     {"code": section.code, "section": section.section},

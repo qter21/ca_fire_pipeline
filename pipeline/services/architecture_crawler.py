@@ -3,6 +3,7 @@
 import logging
 import re
 import time
+import hashlib
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime
 import requests
@@ -56,12 +57,17 @@ class ArchitectureCrawler:
             Dictionary containing:
                 - code: Code abbreviation
                 - url: Architecture page URL
+                - tree: Hierarchical structure
+                - url_manifest: List of all sections with metadata
+                - statistics: Tree statistics
                 - total_sections: Number of sections found
-                - sections: List of section metadata
-                - text_page_urls: List of text page URLs
+                - session_id: Unique session identifier
         """
         logger.info(f"Starting Stage 1 for code: {code}")
         start_time = datetime.utcnow()
+
+        # Generate session ID
+        session_id = hashlib.md5(f"{code}_{datetime.now().isoformat()}".encode()).hexdigest()[:8]
 
         # Update database - mark stage 1 started
         if save_to_db and self.db:
@@ -74,13 +80,8 @@ class ArchitectureCrawler:
         url = self.get_architecture_url(code)
         logger.info(f"Scraping architecture page: {url}")
 
-        # Scrape with Firecrawl
-        result = self.firecrawl.scrape_url(url)
-        markdown = result["data"].get("markdown", "")
-        links_on_page = result["data"].get("linksOnPage", [])
-
-        # Extract text page URLs (divisions, parts, chapters)
-        text_page_urls = self._extract_text_page_urls(links_on_page)
+        # Build tree structure and get text page URLs
+        tree, text_page_urls = self._get_tree_and_text_urls(code)
         logger.info(f"Found {len(text_page_urls)} text pages")
 
         # Extract section URLs from all text pages
@@ -92,9 +93,19 @@ class ArchitectureCrawler:
 
         logger.info(f"Total sections found: {len(all_sections)}")
 
+        # Create url_manifest (sorted section list)
+        url_manifest = self._create_url_manifest(all_sections)
+
+        # Calculate statistics
+        statistics = self._calculate_statistics(tree, url_manifest)
+
+        # Get multi-version section list
+        multi_version_sections = [s["section"] for s in all_sections if s.get("is_multi_version")]
+
         # Save to database if requested
         if save_to_db and self.db:
             self._save_to_database(code, all_sections)
+            self._save_architecture_to_db(code, tree, url_manifest, statistics, session_id, multi_version_sections)
 
             # Update code metadata
             finish_time = datetime.utcnow()
@@ -108,17 +119,122 @@ class ArchitectureCrawler:
             )
 
         result_data = {
+            "success": True,
             "code": code,
             "url": url,
+            "tree": tree,
+            "url_manifest": url_manifest,
+            "statistics": statistics,
+            "multi_version_sections": multi_version_sections,
             "total_sections": len(all_sections),
-            "sections": all_sections,
-            "text_page_urls": text_page_urls,
+            "total_urls": len(url_manifest),
+            "items_count": statistics.get('total_nodes', 0),
+            "session_id": session_id,
+            "crawled_at": datetime.now().isoformat()
         }
 
         duration = (datetime.utcnow() - start_time).total_seconds()
         logger.info(f"Stage 1 complete for {code}: {len(all_sections)} sections in {duration:.2f}s")
 
         return result_data
+
+    def _get_tree_and_text_urls(self, code: str) -> Tuple[Dict, List[str]]:
+        """
+        Build hierarchical tree structure and collect text page URLs (same as old pipeline)
+
+        Args:
+            code: Code abbreviation
+
+        Returns:
+            Tuple of (tree dict, text_page_urls list)
+        """
+        url = self.get_architecture_url(code)
+
+        # Fetch HTML with requests (same as old pipeline)
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (compatible; CaliforniaLegalCodes/1.0)'
+        })
+        response = session.get(url, timeout=30)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        tree = {
+            'type': 'CODE',
+            'code': code,
+            'name': f'California {code} Code',
+            'children': []
+        }
+
+        text_page_urls = []
+
+        # Find the container
+        container = soup.find('div', {'id': 'expandedbranchcodesid'})
+        if not container:
+            logger.warning(f"Container not found for {code}")
+            return tree, text_page_urls
+
+        current_level_nodes = {}
+
+        for link in container.find_all('a', href=True):
+            href = link.get('href', '')
+
+            if 'codes_display' not in href:
+                continue
+
+            # Collect text page URLs
+            if 'codes_displayText' in href:
+                full_url = self.base_url + '/' + href.lstrip('/') if not href.startswith('http') else href
+                text_page_urls.append(full_url)
+
+            # Get text and section range
+            text_div = link.find('div', style=lambda x: x and 'float:left' in x)
+            range_div = link.find('div', style=lambda x: x and 'float:right' in x)
+
+            if not text_div:
+                continue
+
+            text = text_div.get_text(strip=True)
+            section_range_display = range_div.get_text(strip=True) if range_div else ''
+
+            # Get indentation level
+            style = text_div.get('style', '')
+            indent_match = re.search(r'margin-left:(\d+)px', style)
+            indent = int(indent_match.group(1)) if indent_match else 0
+            level = max(0, (indent - 10) // 10)
+
+            # Create node
+            node_type = self._determine_node_type(text)
+            node_number = self._extract_node_number(text, node_type)
+
+            full_label = ""
+            if node_type != 'SECTION' and node_number:
+                full_label = f"{node_type.title()} {node_number}"
+            elif node_type != 'SECTION':
+                full_label = node_type.title()
+
+            node = {
+                'type': node_type,
+                'number': node_number,
+                'title': self._extract_title(text),
+                'full_label': full_label,
+                'level': level,
+                'section_range_display': section_range_display,
+                'children': []
+            }
+
+            # Build hierarchy
+            if level == 0:
+                tree['children'].append(node)
+                current_level_nodes[level] = node
+            else:
+                parent_level = level - 1
+                if parent_level in current_level_nodes:
+                    current_level_nodes[parent_level]['children'].append(node)
+                    current_level_nodes[level] = node
+
+        return tree, text_page_urls
 
     def _extract_text_page_urls(self, links_on_page: List[str]) -> List[str]:
         """Extract text page URLs from links.
@@ -291,6 +407,102 @@ class ArchitectureCrawler:
         # Bulk upsert
         count = self.db.bulk_upsert_sections(section_creates)
         logger.info(f"Saved {count} sections to database")
+
+    def _determine_node_type(self, text: str) -> str:
+        """Determine the type of hierarchy node"""
+        text_upper = text.upper()
+        if 'DIVISION' in text_upper:
+            return 'DIVISION'
+        elif 'PART' in text_upper:
+            return 'PART'
+        elif 'TITLE' in text_upper:
+            return 'TITLE'
+        elif 'CHAPTER' in text_upper:
+            return 'CHAPTER'
+        elif 'ARTICLE' in text_upper:
+            return 'ARTICLE'
+        else:
+            return 'SECTION'
+
+    def _extract_node_number(self, text: str, node_type: str) -> str:
+        """Extract the node number"""
+        if node_type == 'SECTION':
+            return ""
+        pattern = f"{node_type}\\s+(\\d+(?:\\.\\d+)?)"
+        match = re.search(pattern, text, re.IGNORECASE)
+        return match.group(1) if match else ""
+
+    def _extract_title(self, text: str) -> str:
+        """Extract the title portion of the text"""
+        for node_type in ['DIVISION', 'PART', 'TITLE', 'CHAPTER', 'ARTICLE']:
+            pattern = f"{node_type}\\s+\\d+(?:\\.\\d+)?\\s*\\.?\\s*"
+            text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+        return text.strip()
+
+    def _create_url_manifest(self, sections: List[Dict]) -> List[Dict]:
+        """Create sorted URL manifest"""
+        def section_sort_key(item):
+            section = item['section']
+            match = re.match(r'(\d+)(?:\.(\d+))?([a-z]?)', section)
+            if match:
+                main = int(match.group(1))
+                decimal = int(match.group(2)) if match.group(2) else 0
+                letter = ord(match.group(3)) if match.group(3) else 0
+                return (main, decimal, letter)
+            return (0, 0, 0)
+
+        return sorted(sections, key=section_sort_key)
+
+    def _calculate_statistics(self, tree: Dict, url_manifest: List[Dict]) -> Dict:
+        """Calculate statistics"""
+        def count_nodes(node):
+            count = 1
+            for child in node.get('children', []):
+                count += count_nodes(child)
+            return count
+
+        def get_max_depth(node, depth=0):
+            if not node.get('children'):
+                return depth
+            return max(get_max_depth(child, depth + 1) for child in node['children'])
+
+        total_nodes = count_nodes(tree) - 1
+        max_depth = get_max_depth(tree)
+
+        return {
+            'total_nodes': total_nodes,
+            'max_depth': max_depth,
+            'total_sections': len(url_manifest)
+        }
+
+    def _save_architecture_to_db(self, code: str, tree: Dict, url_manifest: List[Dict],
+                                  statistics: Dict, session_id: str, multi_version_sections: List[str]) -> None:
+        """Save complete architecture to database (old pipeline format)"""
+        if not self.db:
+            return
+
+        # Save to code_architectures collection (old pipeline format)
+        architecture_doc = {
+            'code': code,
+            'tree': tree,
+            'url_manifest': url_manifest,
+            'statistics': statistics,
+            'multi_version_sections': multi_version_sections,
+            'total_urls': len(url_manifest),
+            'items_count': statistics.get('total_nodes', 0),
+            'session_id': session_id,
+            'crawled_at': datetime.now().isoformat(),
+            'success': True
+        }
+
+        # Upsert to code_architectures
+        self.db.code_architectures.update_one(
+            {'code': code},
+            {'$set': architecture_doc},
+            upsert=True
+        )
+
+        logger.info(f"Saved architecture tree and manifest for {code} to code_architectures")
 
     def get_all_section_urls(self, code: str) -> List[str]:
         """Get all section URLs for a code from the database.

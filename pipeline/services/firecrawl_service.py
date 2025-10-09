@@ -74,7 +74,8 @@ class FirecrawlService:
 
                 # Check if it's a retriable error
                 is_retriable = any(keyword in error_msg.lower() for keyword in [
-                    'ssl', 'connection', 'timeout', 'network', 'max retries'
+                    'ssl', 'connection', 'timeout', 'network', 'max retries',
+                    'expecting value', 'json', 'parse', 'invalid'  # JSON/API errors
                 ])
 
                 if attempt < max_retries - 1 and is_retriable:
