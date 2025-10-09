@@ -49,3 +49,4 @@ htmlcov/
 
 # Docker
 *.pid
+logs/
