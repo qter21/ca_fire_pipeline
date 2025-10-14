@@ -192,17 +192,36 @@ class DatabaseManager:
             # Create new
             return self.create_section(section)
 
-    def get_sections_by_code(self, code: str, skip: int = 0, limit: int = 100) -> List[Section]:
+    def get_sections_by_code(self, code: str, skip: int = 0, limit: Optional[int] = None) -> List[Section]:
         """Get all sections for a code.
 
         Args:
             code: Code abbreviation
             skip: Number of records to skip
-            limit: Maximum number of records to return
+            limit: Maximum number of records to return (defaults to MAX_SECTIONS_QUERY_LIMIT from config)
 
         Returns:
             List of sections
+
+        Warning:
+            Logs a warning if the total section count exceeds the limit
         """
+        # Get total count first
+        total_count = self.count_sections(code)
+
+        # Use config limit if not specified
+        if limit is None:
+            settings = get_settings()
+            limit = settings.MAX_SECTIONS_QUERY_LIMIT
+
+        # Warn if we're hitting the limit
+        if total_count > limit:
+            logger.warning(
+                f"⚠️ Section query limit reached for code {code}: "
+                f"Fetching {limit:,} of {total_count:,} sections ({limit/total_count*100:.1f}%). "
+                f"Increase MAX_SECTIONS_QUERY_LIMIT in config to process all sections."
+            )
+
         cursor = self.sections.find({"code": code}).skip(skip).limit(limit)
         sections = []
         for doc in cursor:

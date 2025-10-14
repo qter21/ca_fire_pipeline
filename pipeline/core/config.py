@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     BATCH_SIZE: int = 50
     MAX_CONCURRENT_REQUESTS: int = 5
     CACHE_MAX_AGE: int = 172800000  # 2 days in milliseconds
+    MAX_SECTIONS_QUERY_LIMIT: int = 100000  # Maximum sections to fetch in a single query
 
     class Config:
         env_file = ".env"

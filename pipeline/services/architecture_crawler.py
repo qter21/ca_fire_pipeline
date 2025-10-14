@@ -409,17 +409,30 @@ class ArchitectureCrawler:
         logger.info(f"Saved {count} sections to database")
 
     def _determine_node_type(self, text: str) -> str:
-        """Determine the type of hierarchy node"""
+        """Determine the type of hierarchy node using word boundary matching.
+        
+        Args:
+            text: The text to analyze (e.g., "CHAPTER 3. Disability of Party")
+            
+        Returns:
+            Node type (DIVISION, PART, TITLE, CHAPTER, ARTICLE, or SECTION)
+        """
+        # Use word boundary matching to avoid false positives like:
+        # - "PART" in "PARTIES" or "PARTY"
+        # - "TITLE" in "ENTITLED"
+        # Match patterns like "DIVISION 1", "PART 2", "CHAPTER 3", etc.
         text_upper = text.upper()
-        if 'DIVISION' in text_upper:
+        
+        # Check in priority order (most specific first)
+        if re.search(r'\bDIVISION\b', text_upper):
             return 'DIVISION'
-        elif 'PART' in text_upper:
+        elif re.search(r'\bPART\b', text_upper):
             return 'PART'
-        elif 'TITLE' in text_upper:
+        elif re.search(r'\bTITLE\b', text_upper):
             return 'TITLE'
-        elif 'CHAPTER' in text_upper:
+        elif re.search(r'\bCHAPTER\b', text_upper):
             return 'CHAPTER'
-        elif 'ARTICLE' in text_upper:
+        elif re.search(r'\bARTICLE\b', text_upper):
             return 'ARTICLE'
         else:
             return 'SECTION'
@@ -516,5 +529,18 @@ class ArchitectureCrawler:
         if not self.db:
             raise ValueError("Database manager required to get section URLs")
 
-        sections = self.db.get_sections_by_code(code, skip=0, limit=10000)
+        # Get total count to check for truncation
+        total_in_db = self.db.count_sections(code)
+
+        # Fetch sections (will use config limit and log warning if truncated)
+        sections = self.db.get_sections_by_code(code, skip=0, limit=None)
+
+        # Warn if incomplete
+        if len(sections) < total_in_db:
+            logger.warning(
+                f"⚠️ Section URL fetch incomplete for {code}: "
+                f"Retrieved {len(sections):,} of {total_in_db:,} section URLs. "
+                f"Increase MAX_SECTIONS_QUERY_LIMIT in config."
+            )
+
         return [section.url for section in sections]

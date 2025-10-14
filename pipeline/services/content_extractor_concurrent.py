@@ -75,8 +75,22 @@ class ConcurrentContentExtractor:
         if not self.db:
             raise ValueError("Database manager required for content extraction")
 
-        sections = self.db.get_sections_by_code(code, skip=0, limit=10000)
+        # Get total count to check for truncation
+        total_in_db = self.db.count_sections(code)
+
+        # Fetch sections (will use config limit and log warning if truncated)
+        sections = self.db.get_sections_by_code(code, skip=0, limit=None)
         total_sections = len(sections)
+
+        # Check if we hit the limit
+        incomplete_processing = total_sections < total_in_db
+        if incomplete_processing:
+            logger.error(
+                f"❌ INCOMPLETE PROCESSING: Only fetched {total_sections:,} of {total_in_db:,} sections for {code}. "
+                f"Missing {total_in_db - total_sections:,} sections ({(total_in_db - total_sections)/total_in_db*100:.1f}%). "
+                f"💡 Increase MAX_SECTIONS_QUERY_LIMIT in config to process all sections."
+            )
+
         logger.info(f"Found {total_sections} sections to process concurrently")
 
         if total_sections == 0:
@@ -234,19 +248,24 @@ class ConcurrentContentExtractor:
         result = {
             "code": code,
             "total_sections": total_sections,
+            "total_in_database": total_in_db,
+            "incomplete_processing": incomplete_processing,
             "single_version_count": single_version_count,
             "multi_version_count": multi_version_count,
             "failed_sections": failed_sections
         }
 
         duration = (datetime.now() - start_time).total_seconds()
-        logger.info(
-            f"Concurrent Stage 2 complete for {code}: "
+        completion_msg = f"Concurrent Stage 2 complete for {code}: "
+        if incomplete_processing:
+            completion_msg += f"⚠️ INCOMPLETE ({total_sections:,}/{total_in_db:,} sections) - "
+        completion_msg += (
             f"{single_version_count} single-version, "
             f"{multi_version_count} multi-version, "
             f"{len(failed_sections)} failed "
             f"in {duration:.2f}s ({duration/60:.2f} minutes)"
         )
+        logger.info(completion_msg)
 
         # Mark checkpoint as completed
         if checkpoint:

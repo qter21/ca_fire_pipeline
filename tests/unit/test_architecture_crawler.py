@@ -16,9 +16,13 @@ class TestArchitectureCrawler:
         """Test architecture URL generation."""
         url = crawler.get_architecture_url("EVID")
 
-        assert "codes_displayexpandedbranch.xhtml" in url
+        assert "codedisplayexpand.xhtml" in url
         assert "tocCode=EVID" in url
         assert url.startswith("https://leginfo.legislature.ca.gov")
+        
+        # Verify URL format matches official website
+        expected_url = "https://leginfo.legislature.ca.gov/faces/codedisplayexpand.xhtml?tocCode=EVID"
+        assert url == expected_url
 
     def test_extract_section_number(self, crawler):
         """Test section number extraction from URL."""

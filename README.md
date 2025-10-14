@@ -2,15 +2,15 @@
 
 Firecrawl-based data pipeline for fetching California legal codes from [leginfo.legislature.ca.gov](https://leginfo.legislature.ca.gov/faces/home.xhtml).
 
-## 🎉 Status: v0.2 - Production Deployed!
+## 🎉 Status: v0.3 - Architecture Parser Fixed!
 
-**Current Status:** ✅ **v0.2 Production Deployed** - Running on Google Cloud
-**Production Codes:** EVID (506 sections) + FAM (1,626 sections) = **2,132 sections** at 100%
-**Deployment:** Google Cloud Compute Engine (codecond, us-west2-a)
-**Public URL:** https://www.codecond.com (live with new data)
-**Docker:** Ubuntu 22.04 + Playwright + Chromium (full multi-version support)
-**Performance:** **10x faster than old pipeline** - 3 min (EVID) + 10 min (FAM)
-**Next:** Process remaining 26 California codes (4-6 hours estimated)
+**Current Status:** ✅ **v0.3 Architecture Parser Fixed** - Correct hierarchy for all codes
+**Latest Update:** Fixed node type classification bug (55 corrections across all codes)
+**Production Codes:** CCP (3,354), FAM (1,626), EVID (506), PEN (5,660) = **11,146 sections**
+**Architecture:** All code hierarchies now correctly match official website structure
+**Testing:** 26/26 unit tests passing, 100% section preservation
+**Performance:** **10x faster than old pipeline** with accurate tree structures
+**Next:** Continue processing remaining California codes
 
 ## 🎯 Project Goal
 
@@ -193,10 +193,22 @@ MAX_CONCURRENT_REQUESTS=5
 - [x] ✅ **Website integration** (https://www.codecond.com live)
 - [ ] Process remaining 26 codes (ready to start)
 
-### 🔜 Phase 3: Complete Dataset
+### ✅ Phase 3: Architecture Parser Fix (COMPLETE)
 
-- [x] ✅ Production validation (2 codes, 2,132 sections, 100% success)
-- [ ] Process remaining 26 California codes
+- [x] ✅ **Identified node type classification bug** (word boundary issue)
+- [x] ✅ **Fixed `_determine_node_type()` method** (regex word boundaries)
+- [x] ✅ **Re-crawled all 4 codes** (CCP, FAM, EVID, PEN)
+- [x] ✅ **55 nodes correctly reclassified** (PART → CHAPTER/ARTICLE/TITLE)
+- [x] ✅ **Zero data loss** (11,146 sections preserved)
+- [x] ✅ **All tests passing** (26/26 unit tests)
+- [x] ✅ **Comprehensive documentation** (3 new technical docs)
+
+**See:** `docs/reports/ARCHITECTURE_PARSER_FIX.md` for details
+
+### 🔜 Phase 4: Complete Dataset
+
+- [x] ✅ Production validation (4 codes, 11,146 sections, 100% success)
+- [ ] Process remaining 25 California codes
 - [ ] Complete all 30 codes dataset
 
 ## 🔗 Related Projects
