@@ -2,14 +2,15 @@
 
 Firecrawl-based data pipeline for fetching California legal codes from [leginfo.legislature.ca.gov](https://leginfo.legislature.ca.gov/faces/home.xhtml).
 
-## 🎉 Status: Phase 1 Complete!
+## 🎉 Status: v0.2 - Production Deployed!
 
-**Current Status:** ✅ Phase 1 Complete - 4 Codes Processed
-**Sections Processed:** 11,145 sections across FAM, CCP, EVID, PEN (99.95% success)
-**Concurrent Scraping:** 9x faster with 25 workers (210 sections/min)
-**Features:** Tree structure + Complete legislative history + Multi-version (92 versions)
-**Performance:** **8.5-13x faster than old pipeline** (2.3 hours vs 20-30 hours for 4 codes)
-**Next:** Process remaining 26 codes or deploy current data
+**Current Status:** ✅ **v0.2 Production Deployed** - Running on Google Cloud
+**Production Codes:** EVID (506 sections) + FAM (1,626 sections) = **2,132 sections** at 100%
+**Deployment:** Google Cloud Compute Engine (codecond, us-west2-a)
+**Public URL:** https://www.codecond.com (live with new data)
+**Docker:** Ubuntu 22.04 + Playwright + Chromium (full multi-version support)
+**Performance:** **10x faster than old pipeline** - 3 min (EVID) + 10 min (FAM)
+**Next:** Process remaining 26 California codes (4-6 hours estimated)
 
 ## 🎯 Project Goal
 
@@ -180,21 +181,23 @@ MAX_CONCURRENT_REQUESTS=5
 - [x] **4 codes processed (11,145 sections)** ✅
 - [x] **10 bugs found and fixed** ✅
 
-### 📋 Phase 2: Production Deployment (Next)
+### 📋 Phase 2: Production Deployment (COMPLETE ✅)
 
 - [x] ✅ Concurrent scraping (implemented - 9x faster)
 - [x] ✅ Error handling & retry logic (10 error types)
 - [x] ✅ Tree structure (implemented)
-- [ ] Docker deployment
-- [ ] Process remaining 26 codes
-- [ ] Production validation
+- [x] ✅ **Docker deployment** (Ubuntu 22.04 + Playwright)
+- [x] ✅ **Production validation** (EVID + FAM processed successfully)
+- [x] ✅ **GCloud deployment** (codecond instance, us-west2-a)
+- [x] ✅ **API integration** (legal-codes-api serving data)
+- [x] ✅ **Website integration** (https://www.codecond.com live)
+- [ ] Process remaining 26 codes (ready to start)
 
-### 🔜 Phase 3 & 4: Deployment & Migration
+### 🔜 Phase 3: Complete Dataset
 
-- [ ] Production validation
-- [ ] Data migration from old pipeline
-- [ ] API integration with legal-codes-api
-- [ ] Full deployment
+- [x] ✅ Production validation (2 codes, 2,132 sections, 100% success)
+- [ ] Process remaining 26 California codes
+- [ ] Complete all 30 codes dataset
 
 ## 🔗 Related Projects
 

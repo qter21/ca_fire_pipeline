@@ -13,6 +13,7 @@ from pipeline.services.multi_version_handler import MultiVersionHandler
 from pipeline.core.database import DatabaseManager
 from pipeline.core.config import get_settings
 from pipeline.models.section import SectionUpdate
+from pipeline.models.checkpoint import ProcessingCheckpoint, CheckpointUpdate, ProcessingStage, CheckpointStatus
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,8 @@ class ConcurrentContentExtractor:
         self,
         db_manager: Optional[DatabaseManager] = None,
         batch_size: Optional[int] = None,
-        max_workers: int = 10
+        max_workers: int = 10,
+        enable_checkpointing: bool = True
     ):
         """
         Initialize concurrent content extractor
@@ -37,6 +39,7 @@ class ConcurrentContentExtractor:
             db_manager: Database manager instance
             batch_size: Batch size for processing (default from settings)
             max_workers: Max concurrent workers (default: 10, max: 50)
+            enable_checkpointing: Enable checkpoint saving for pause/resume
         """
         self.firecrawl = ConcurrentFirecrawlService(max_workers=max_workers)
         self.multi_version_handler = MultiVersionHandler()
@@ -44,6 +47,7 @@ class ConcurrentContentExtractor:
         settings = get_settings()
         self.batch_size = batch_size or settings.BATCH_SIZE
         self.max_workers = max_workers
+        self.enable_checkpointing = enable_checkpointing
 
         logger.info(f"Concurrent Content Extractor initialized with {max_workers} workers")
 
@@ -89,15 +93,41 @@ class ConcurrentContentExtractor:
         from pipeline.models.code import CodeUpdate
         self.db.update_code(code, CodeUpdate(stage2_started=start_time))
 
+        # Initialize or load checkpoint
+        checkpoint = None
+        if self.enable_checkpointing:
+            checkpoint = self._get_or_create_checkpoint(code, total_sections, ProcessingStage.STAGE2_CONTENT)
+            logger.info(f"Checkpoint: {checkpoint.processed_sections}/{checkpoint.total_sections} already processed")
+
         # Process in batches with concurrent requests
         single_version_count = 0
         multi_version_count = 0
         failed_sections = []
-        processed = 0
+        processed = checkpoint.processed_sections if checkpoint else 0
+        total_batches = (total_sections + self.batch_size - 1) // self.batch_size
 
         for i in range(0, total_sections, self.batch_size):
+            batch_num = i // self.batch_size + 1
+
+            # Skip already processed batches if resuming
+            if checkpoint and batch_num <= checkpoint.current_batch:
+                logger.info(f"Skipping already processed batch {batch_num}")
+                continue
+
             batch = sections[i:i + self.batch_size]
-            logger.info(f"Processing batch {i // self.batch_size + 1}: sections {i+1}-{min(i+self.batch_size, total_sections)}")
+
+            # Enhanced progress logging
+            batch_progress = (batch_num / total_batches * 100) if total_batches > 0 else 0
+            overall_progress = (processed / total_sections * 100) if total_sections > 0 else 0
+
+            logger.info(
+                f"{'='*80}\n"
+                f"Batch {batch_num}/{total_batches} ({batch_progress:.1f}%) | "
+                f"Overall: {processed}/{total_sections} ({overall_progress:.1f}%)\n"
+                f"Sections {i+1}-{min(i+self.batch_size, total_sections)} | "
+                f"Workers: {self.max_workers}\n"
+                f"{'='*80}"
+            )
 
             # Extract URLs for batch
             urls = [section.url for section in batch]
@@ -184,6 +214,10 @@ class ConcurrentContentExtractor:
                     failed_sections.append(f"{section.code}:{section.section}")
                 processed += len(batch)
 
+            # Save checkpoint after each batch
+            if checkpoint:
+                self._save_checkpoint(checkpoint, batch_num, processed, failed_sections)
+
         # Update database - mark stage 2 completed
         finish_time = datetime.now()
         self.db.update_code(
@@ -214,4 +248,92 @@ class ConcurrentContentExtractor:
             f"in {duration:.2f}s ({duration/60:.2f} minutes)"
         )
 
+        # Mark checkpoint as completed
+        if checkpoint:
+            self._complete_checkpoint(checkpoint)
+
         return result
+
+    def _get_or_create_checkpoint(self, code: str, total_sections: int, stage: ProcessingStage) -> ProcessingCheckpoint:
+        """
+        Get existing checkpoint or create new one
+
+        Args:
+            code: Code abbreviation
+            total_sections: Total sections to process
+            stage: Current processing stage
+
+        Returns:
+            ProcessingCheckpoint instance
+        """
+        # Try to load existing checkpoint
+        existing = self.db.db['processing_checkpoints'].find_one({
+            'code': code,
+            'stage': stage,
+            'status': {'$in': [CheckpointStatus.IN_PROGRESS, CheckpointStatus.PAUSED]}
+        })
+
+        if existing:
+            logger.info(f"Resuming from checkpoint: batch {existing.get('current_batch', 0)}")
+            return ProcessingCheckpoint(**existing)
+
+        # Create new checkpoint
+        checkpoint = ProcessingCheckpoint(
+            code=code,
+            stage=stage,
+            total_sections=total_sections,
+            total_batches=(total_sections + self.batch_size - 1) // self.batch_size,
+            batch_size=self.batch_size,
+            workers=self.max_workers
+        )
+
+        # Save to database
+        checkpoint_dict = checkpoint.dict()
+        self.db.db['processing_checkpoints'].insert_one(checkpoint_dict)
+
+        logger.info(f"Created new checkpoint for {code}")
+        return checkpoint
+
+    def _save_checkpoint(self, checkpoint: ProcessingCheckpoint, current_batch: int, processed: int, failed: List[str]) -> None:
+        """
+        Save checkpoint to database
+
+        Args:
+            checkpoint: Checkpoint instance
+            current_batch: Current batch number
+            processed: Number of processed sections
+            failed: List of failed sections
+        """
+        update = CheckpointUpdate(
+            current_batch=current_batch,
+            processed_sections=processed,
+            failed_sections=failed,
+            last_updated=datetime.now()
+        )
+
+        self.db.db['processing_checkpoints'].update_one(
+            {'code': checkpoint.code, 'stage': checkpoint.stage},
+            {'$set': update.dict(exclude_none=True)}
+        )
+
+        logger.debug(f"Checkpoint saved: batch {current_batch}, {processed} processed")
+
+    def _complete_checkpoint(self, checkpoint: ProcessingCheckpoint) -> None:
+        """
+        Mark checkpoint as completed
+
+        Args:
+            checkpoint: Checkpoint instance
+        """
+        update = CheckpointUpdate(
+            status=CheckpointStatus.COMPLETED,
+            stage2_completed=True,
+            completed_at=datetime.now()
+        )
+
+        self.db.db['processing_checkpoints'].update_one(
+            {'code': checkpoint.code, 'stage': checkpoint.stage},
+            {'$set': update.dict(exclude_none=True)}
+        )
+
+        logger.info(f"Checkpoint marked as completed for {checkpoint.code}")

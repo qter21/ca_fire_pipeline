@@ -16,18 +16,41 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from typing import Dict
 import os
+import signal
 from pipeline.core.database import DatabaseManager
 from pipeline.services.architecture_crawler import ArchitectureCrawler
 from pipeline.services.content_extractor_concurrent import ConcurrentContentExtractor
 from pipeline.services.content_extractor import ContentExtractor
 from pipeline.services.reconciliation_service import ReconciliationService
 from pipeline.services.firecrawl_service import FirecrawlService
+from pipeline.models.checkpoint import CheckpointUpdate, CheckpointStatus
 from datetime import datetime
 import logging
+
+# Global flag for graceful shutdown
+shutdown_requested = False
 
 # Create logs directory if it doesn't exist
 log_dir = Path(__file__).parent.parent / "logs"
 log_dir.mkdir(exist_ok=True)
+
+
+def signal_handler(signum, frame):
+    """Handle shutdown signals gracefully"""
+    global shutdown_requested
+    signal_name = signal.Signals(signum).name
+    logging.warning(f"\n{'='*80}")
+    logging.warning(f"Received {signal_name} signal - initiating graceful shutdown...")
+    logging.warning(f"Checkpoint will be saved. You can resume with --resume flag.")
+    logging.warning(f"{'='*80}")
+    shutdown_requested = True
+
+
+def setup_signal_handlers():
+    """Setup signal handlers for graceful shutdown"""
+    signal.signal(signal.SIGINT, signal_handler)   # Ctrl+C
+    signal.signal(signal.SIGTERM, signal_handler)  # kill command
+    logging.info("Signal handlers registered (SIGINT, SIGTERM)")
 
 
 def setup_logging(code: str):
@@ -67,13 +90,14 @@ def setup_logging(code: str):
     return log_file
 
 
-def process_code_complete(code: str, initial_workers: int = 15) -> Dict:
+def process_code_complete(code: str, initial_workers: int = 15, resume: bool = False) -> Dict:
     """
     Process a complete code with automatic reconciliation
 
     Args:
         code: Code abbreviation
         initial_workers: Initial concurrent workers (default: 15, safe for rate limits)
+        resume: Resume from checkpoint if available
 
     Returns:
         Complete processing report
@@ -81,26 +105,36 @@ def process_code_complete(code: str, initial_workers: int = 15) -> Dict:
     # Setup logging first
     log_file = setup_logging(code)
 
+    # Setup signal handlers for graceful shutdown
+    setup_signal_handlers()
+
     logging.info('='*80)
     logging.info(f'Processing {code} with Auto-Reconciliation')
     logging.info(f'Initial concurrent workers: {initial_workers}')
+    logging.info(f'Resume mode: {"ON" if resume else "OFF"}')
     logging.info('='*80)
 
     db = DatabaseManager()
     db.connect()
     logging.info(f"Connected to MongoDB")
 
-    # Clean data
-    logging.info('='*80)
-    logging.info('🧹 Step 1: Cleaning existing data')
-    logging.info('='*80)
+    # Clean data (skip if resuming)
+    if not resume:
+        logging.info('='*80)
+        logging.info('🧹 Step 1: Cleaning existing data')
+        logging.info('='*80)
 
-    sections_deleted = db.section_contents.delete_many({'code': code}).deleted_count
-    arch_deleted = db.code_architectures.delete_many({'code': code}).deleted_count
+        sections_deleted = db.section_contents.delete_many({'code': code}).deleted_count
+        arch_deleted = db.code_architectures.delete_many({'code': code}).deleted_count
 
-    logging.info(f"Deleted {sections_deleted} sections from section_contents")
-    logging.info(f"Deleted {arch_deleted} documents from code_architectures")
-    logging.info('✅ Data cleared')
+        logging.info(f"Deleted {sections_deleted} sections from section_contents")
+        logging.info(f"Deleted {arch_deleted} documents from code_architectures")
+        logging.info('✅ Data cleared')
+    else:
+        logging.info('='*80)
+        logging.info('🔄 Step 1: Resuming from checkpoint')
+        logging.info('='*80)
+        logging.info('Skipping data cleanup')
 
     firecrawl = FirecrawlService()
 
@@ -277,12 +311,20 @@ def process_code_complete(code: str, initial_workers: int = 15) -> Dict:
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: python process_code_with_reconciliation.py <CODE>")
+        print("Usage: python process_code_with_reconciliation.py <CODE> [--resume]")
         print("Example: python process_code_with_reconciliation.py FAM")
+        print("         python process_code_with_reconciliation.py FAM --resume")
         sys.exit(1)
 
     code = sys.argv[1].upper()
-    result = process_code_complete(code, initial_workers=15)
+    resume = '--resume' in sys.argv
+
+    result = process_code_complete(code, initial_workers=15, resume=resume)
 
     # Exit with appropriate code
+    if shutdown_requested:
+        print("\nProcess was interrupted. Resume with:")
+        print(f"  python scripts/process_code_with_reconciliation.py {code} --resume")
+        sys.exit(130)  # Standard exit code for SIGINT
+
     sys.exit(0 if result['reconciliation']['success'] else 1)

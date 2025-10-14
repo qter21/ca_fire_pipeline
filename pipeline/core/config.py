@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     # Firecrawl Configuration
     FIRECRAWL_API_KEY: str
     FIRECRAWL_BASE_URL: str = "https://api.firecrawl.dev"
-    FIRECRAWL_TIMEOUT: int = 60
+    FIRECRAWL_TIMEOUT: int = 60  # Request timeout in seconds
+    FIRECRAWL_REQUEST_TIMEOUT: int = 90  # Individual request timeout (includes retries)
 
     # MongoDB Configuration
     MONGODB_URI: str = "mongodb://admin:legalcodes123@mongodb:27017/ca_codes_db?authSource=admin"
