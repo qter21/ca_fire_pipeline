@@ -2,15 +2,16 @@
 
 Firecrawl-based data pipeline for fetching California legal codes from [leginfo.legislature.ca.gov](https://leginfo.legislature.ca.gov/faces/home.xhtml).
 
-## 🎉 Status: v0.3 - Architecture Parser Fixed!
+## 🎉 Status: v0.3.1 - PROB Code Added!
 
-**Current Status:** ✅ **v0.3 Architecture Parser Fixed** - Correct hierarchy for all codes
-**Latest Update:** Fixed node type classification bug (55 corrections across all codes)
-**Production Codes:** CCP (3,354), FAM (1,626), EVID (506), PEN (5,660) = **11,146 sections**
-**Architecture:** All code hierarchies now correctly match official website structure
+**Current Status:** ✅ **v0.3.1 Production** - 6 codes live on codecond.com
+**Latest Update:** Added PROB (Probate Code) - 2,710 sections processed successfully
+**Production Codes:** CCP (3,354), EVID (506), FAM (1,626), GOV (21,418), PEN (5,660), PROB (2,710) = **35,274 sections**
+**Live URL:** https://www.codecond.com
+**Architecture:** All code hierarchies correctly match official website structure
 **Testing:** 26/26 unit tests passing, 100% section preservation
 **Performance:** **10x faster than old pipeline** with accurate tree structures
-**Next:** Continue processing remaining California codes
+**Progress:** 6/30 codes (20%) | **24 codes remaining**
 
 ## 🎯 Project Goal
 
