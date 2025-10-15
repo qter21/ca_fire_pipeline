@@ -2,8 +2,9 @@
 
 Firecrawl-based data pipeline for fetching California legal codes from [leginfo.legislature.ca.gov](https://leginfo.legislature.ca.gov/faces/home.xhtml).
 
-## 🎉 Status: v0.3.1 - PROB Code Added!
+## 🎉 Status: v0.3.1 - First Batch Complete!
 
+**Milestone:** 🎯 **First batch of codes fetched and online** (10/15/25)
 **Current Status:** ✅ **v0.3.1 Production** - 6 codes live on codecond.com
 **Latest Update:** Added PROB (Probate Code) - 2,710 sections processed successfully
 **Production Codes:** CCP (3,354), EVID (506), FAM (1,626), GOV (21,418), PEN (5,660), PROB (2,710) = **35,274 sections**
