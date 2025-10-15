@@ -51,6 +51,87 @@ cp .env.example .env
 
 **Note:** Python 3.12 provides ~25% better performance and improved error messages compared to older versions.
 
+## 📚 Processing a California Code
+
+### Complete Processing Guide
+
+For detailed instructions on processing any California code, see:
+- **[PRODUCTION_PROCESSING_GUIDE.md](docs/technical/PRODUCTION_PROCESSING_GUIDE.md)** - Complete step-by-step guide for processing codes on GCloud production
+
+### Quick Command (GCloud Production)
+
+```bash
+# SSH to GCloud production instance
+gcloud compute ssh codecond --zone=us-west2-a
+
+# Process any California code (one command!)
+sudo docker exec ca-fire-pipeline python scripts/process_code_complete.py <CODE>
+
+# Examples:
+# sudo docker exec ca-fire-pipeline python scripts/process_code_complete.py CIV
+# sudo docker exec ca-fire-pipeline python scripts/process_code_complete.py CORP
+# sudo docker exec ca-fire-pipeline python scripts/process_code_complete.py PEN
+```
+
+### What Happens During Processing
+
+The pipeline automatically runs through 3 stages:
+
+1. **Stage 1 - Architecture Discovery** (~2-10 min)
+   - Discovers all section URLs from the table of contents
+   - Builds hierarchical tree structure
+   - Saves architecture to MongoDB
+
+2. **Stage 2 - Concurrent Content Extraction** (~10-40 min depending on size)
+   - Extracts content from all sections using Firecrawl API
+   - Processes 15 sections concurrently (~3-5 sections/second)
+   - Identifies multi-version sections
+   - Auto-saves progress with checkpoints
+
+3. **Stage 3 - Multi-Version Extraction** (~0-5 min)
+   - Extracts all versions from multi-version sections using Playwright
+   - Preserves historical changes to laws
+
+4. **Reconciliation** (automatic)
+   - Retries any failed sections
+   - Ensures 100% completion
+
+### Monitoring Progress
+
+Watch the logs in real-time:
+```bash
+# Follow the logs
+sudo docker exec ca-fire-pipeline tail -f /app/logs/<code>_complete_*.log
+
+# Check section count in database
+sudo docker exec ca-fire-pipeline python -c "
+from pipeline.core.database import DatabaseManager
+from pipeline.core.config import get_settings
+db = DatabaseManager(get_settings().mongodb_uri)
+db.connect()
+count = db.section_contents.count_documents({'code': '<CODE>'})
+print(f'Sections in database: {count:,}')
+"
+```
+
+### Expected Processing Times
+
+| Code Size | Sections | Expected Time |
+|-----------|----------|---------------|
+| Small (EVID) | ~500 | 3-5 minutes |
+| Medium (FAM, CORP) | 1,500-2,500 | 15-25 minutes |
+| Large (CCP, CIV) | 3,000-4,000 | 25-40 minutes |
+| Very Large (PEN) | 5,000-6,000 | 35-50 minutes |
+| Massive (GOV) | 20,000+ | 2-3 hours |
+
+### Important Notes
+
+⚠️ **Firecrawl API Credits**: Large codes (5,000+ sections) consume significant API credits. Monitor your credit balance at [firecrawl.dev](https://firecrawl.dev).
+
+✅ **Data Integrity**: The pipeline maintains 99.95%+ success rates with automatic retry mechanisms.
+
+📊 **Production Status**: Check current production codes and statistics in [PRODUCTION_STATUS.md](docs/reports/PRODUCTION_STATUS.md)
+
 ### Run the API Server
 
 ```bash
